@@ -1,6 +1,8 @@
 const express = require("express");
 const bookController = require("../controllers/book.controller");
 const validate = require("../middlewares/validate.middleware");
+const authenticate = require("../middlewares/auth.middleware");
+
 const {
   createBookSchema,
   updateBookSchema,
@@ -27,7 +29,12 @@ const bookRouter = express.Router();
  *       400:
  *         description: Validation error
  */
-bookRouter.post("/", validate(createBookSchema), bookController.createBook);
+bookRouter.post(
+  "/",
+  authenticate,
+  validate(createBookSchema),
+  bookController.createBook,
+);
 /**
  * @swagger
  * /books:
@@ -41,7 +48,7 @@ bookRouter.post("/", validate(createBookSchema), bookController.createBook);
  *       404:
  *         description: No books found
  */
-bookRouter.get("/", bookController.getAllBooks);
+bookRouter.get("/", authenticate, bookController.getAllBooks);
 /**
  * @swagger
  * /books/{id}:
@@ -63,7 +70,7 @@ bookRouter.get("/", bookController.getAllBooks);
  *       404:
  *         description: Book not found
  */
-bookRouter.get("/:id", bookController.getBookById);
+bookRouter.get("/:id", authenticate, bookController.getBookById);
 /**
  * @swagger
  * /books/{id}:
@@ -91,7 +98,12 @@ bookRouter.get("/:id", bookController.getBookById);
  *       404:
  *         description: Book not found
  */
-bookRouter.put("/:id", validate(updateBookSchema), bookController.updateBook);
+bookRouter.put(
+  "/:id",
+  authenticate,
+  validate(updateBookSchema),
+  bookController.updateBook,
+);
 /**
  * @swagger
  * /books/{id}:
@@ -113,5 +125,5 @@ bookRouter.put("/:id", validate(updateBookSchema), bookController.updateBook);
  *       404:
  *         description: Book not found
  */
-bookRouter.delete("/:id", bookController.deleteBook);
+bookRouter.delete("/:id", authenticate, bookController.deleteBook);
 module.exports = bookRouter;
