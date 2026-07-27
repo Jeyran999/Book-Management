@@ -1,6 +1,6 @@
 # Book Management API
 
-A RESTful API for managing books, authors, and categories. This project was developed using Node.js, Express.js, and MongoDB.
+A RESTful API for managing books, authors, and categories. This project was developed using Node.js, Express.js, and MongoDB following a layered architecture.
 
 ## Technologies
 
@@ -8,6 +8,8 @@ A RESTful API for managing books, authors, and categories. This project was deve
 * Express.js
 * MongoDB
 * Mongoose
+* JWT
+* bcrypt
 * Joi
 * Swagger / OpenAPI
 * Jest
@@ -24,6 +26,39 @@ A RESTful API for managing books, authors, and categories. This project was deve
 * Pagination and sorting
 * Swagger/OpenAPI API documentation
 * Unit tests for the service layer
+* JWT-based authentication
+* Stateless authentication
+* Role-Based Access Control (RBAC)
+* USER and ADMIN roles
+* Protected routes
+* JWT token expiration handling
+* Proper 401 and 403 authentication error responses
+
+## Authentication & Authorization
+
+This API uses JWT-based authentication.
+
+Users can have one of the following roles:
+
+* `USER`
+* `ADMIN`
+
+JWT tokens expire after 1 day.
+
+### Access Control
+
+| Endpoint            | USER | ADMIN |
+| ------------------- | ---- | ----- |
+| `GET /books`        | ✅    | ✅     |
+| `GET /books/:id`    | ✅    | ✅     |
+| `POST /books`       | ❌    | ✅     |
+| `PUT /books/:id`    | ❌    | ✅     |
+| `DELETE /books/:id` | ❌    | ✅     |
+
+### Authentication Errors
+
+* `401 Unauthorized` — Returned when the authentication token is missing, invalid, or expired.
+* `403 Forbidden` — Returned when the user is authenticated but does not have the required role.
 
 ## Project Structure
 
@@ -36,20 +71,28 @@ src/
 ├── dto/
 │   └── book.dto.js
 ├── middlewares/
+│   ├── auth.middleware.js
 │   ├── error.middleware.js
+│   ├── role.middleware.js
 │   └── validate.middleware.js
 ├── models/
 │   ├── author.model.js
 │   ├── book.model.js
-│   └── category.model.js
+│   ├── category.model.js
+│   └── user.model.js
 ├── repositories/
-│   └── book.repository.js
+│   ├── book.repository.js
+│   └── user.repository.js
 ├── routes/
 │   └── book.routes.js
 ├── services/
-│   └── book.service.js
+│   ├── book.service.js
+│   └── auth.service.js
 ├── tests/
 │   └── book.service.test.js
+├── utils/
+│   ├── jwt.js
+│   └── password.js
 ├── validations/
 │   └── book.validation.js
 └── app.js
@@ -80,6 +123,7 @@ Create a `.env` file in the root directory:
 ```env
 PORT=3000
 MONGO_URI=mongodb_connection_string
+JWT_SECRET=your_secret_key
 ```
 
 Start the development server:
@@ -101,6 +145,7 @@ Create a `.env` file with the following variables:
 ```env
 PORT=3000
 MONGO_URI=mongodb_connection_string
+JWT_SECRET=your_secret_key
 ```
 
 You can use `.env.example` as a template.
@@ -112,6 +157,8 @@ You can use `.env.example` as a template.
 ```text
 POST /books
 ```
+
+**Required role:** `ADMIN`
 
 ### Get All Books
 
@@ -137,11 +184,15 @@ GET /books/:id
 PUT /books/:id
 ```
 
+**Required role:** `ADMIN`
+
 ### Delete a Book
 
 ```text
 DELETE /books/:id
 ```
+
+**Required role:** `ADMIN`
 
 ## API Documentation
 
@@ -165,6 +216,8 @@ npm test
 
 ## Checkpoints
 
+### Week 1
+
 * **CP-1:** Project setup and entity design
 * **CP-2:** Layered architecture and DTO implementation
 * **CP-3:** Complete CRUD endpoints with correct HTTP status codes
@@ -172,6 +225,13 @@ npm test
 * **CP-5:** Pagination and sorting
 * **CP-6:** Swagger/OpenAPI API documentation
 * **CP-7:** Unit tests for the service layer
+
+### Week 2
+
+* **CP-1:** JWT-based authentication and stateless session management
+* **CP-2:** Role-Based Access Control with USER and ADMIN roles
+* **CP-3:** Correct responses for authentication errors (401 and 403)
+* **CP-4:** JWT token expiration handling
 
 ## License
 
