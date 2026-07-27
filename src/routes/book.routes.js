@@ -2,6 +2,7 @@ const express = require("express");
 const bookController = require("../controllers/book.controller");
 const validate = require("../middlewares/validate.middleware");
 const authenticate = require("../middlewares/auth.middleware");
+const roleMiddleware = require("../middlewares/role.middleware");
 
 const {
   createBookSchema,
@@ -32,6 +33,7 @@ const bookRouter = express.Router();
 bookRouter.post(
   "/",
   authenticate,
+  roleMiddleware("ADMIN"),
   validate(createBookSchema),
   bookController.createBook,
 );
@@ -101,6 +103,7 @@ bookRouter.get("/:id", authenticate, bookController.getBookById);
 bookRouter.put(
   "/:id",
   authenticate,
+  roleMiddleware("ADMIN"),
   validate(updateBookSchema),
   bookController.updateBook,
 );
@@ -125,5 +128,10 @@ bookRouter.put(
  *       404:
  *         description: Book not found
  */
-bookRouter.delete("/:id", authenticate, bookController.deleteBook);
+bookRouter.delete(
+  "/:id",
+  authenticate,
+  roleMiddleware("ADMIN"),
+  bookController.deleteBook,
+);
 module.exports = bookRouter;
