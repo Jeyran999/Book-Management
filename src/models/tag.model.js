@@ -1,16 +1,12 @@
 const mongoose = require("mongoose");
 
-const authorSchema = new mongoose.Schema(
+const tagSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
       trim: true,
-    },
-    bio: {
-      type: String,
-      required: true,
-      trim: true,
+      unique: true,
     },
     books: [
       {
@@ -22,6 +18,6 @@ const authorSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const Author = mongoose.model("Author", authorSchema);
+const Tag = mongoose.model("Tag", tagSchema)
 
-module.exports = Author;
+module.exports = Tag

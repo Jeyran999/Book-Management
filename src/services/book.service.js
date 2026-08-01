@@ -1,8 +1,31 @@
 const { toBookDto } = require("../dto/book.dto");
 const bookRepository = require("../repositories/book.repository");
+const authorRepository = require("../repositories/author.repository");
+const categoryRepository = require("../repositories/category.repository");
+const tagRepository = require("../repositories/tag.repository");
 
 const createBook = async (bookData) => {
   const book = await bookRepository.create(bookData);
+
+  const author = await authorRepository.findById(book.author);
+  author.books.push(book._id);
+  await authorRepository.save(author);
+
+  const category = await categoryRepository.findById(book.category);
+  category.books.push(book._id);
+  await categoryRepository.save(category);
+
+  if (book.tags && book.tags.length > 0) {
+    for (const tagId of book.tags) {
+      const tag = await tagRepository.findById(tagId);
+
+      if (tag) {
+        tag.books.push(book._id);
+        await tagRepository.save(tag);
+      }
+    }
+  }
+
   return toBookDto(book);
 };
 

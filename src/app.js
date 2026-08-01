@@ -5,6 +5,7 @@ const swaggerSpec = require("../src/config/swagger");
 const bookRouter = require("./routes/book.routes");
 const errorHandler = require("./middlewares/error.middleware");
 const authRouter = require("./routes/auth.routes");
+const tagRouter = require("./routes/tag.routes");
 const app = express();
 
 app.use(express.json());
@@ -19,6 +20,8 @@ app.get("/", (req, res) => {
 
 app.use("/books", bookRouter);
 app.use("/auth", authRouter);
+app.use("/tags", tagRouter);
+
 app.use(errorHandler);
 
 module.exports = app;

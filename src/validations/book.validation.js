@@ -30,6 +30,7 @@ const createBookSchema = Joi.object({
     "string.empty": "Category is required",
     "any.required": "Category is required",
   }),
+  tags: Joi.array().items(Joi.string().hex().length(24)).optional(),
 });
 
 const updateBookSchema = Joi.object({
@@ -51,5 +52,6 @@ const updateBookSchema = Joi.object({
   }),
   author: Joi.string(),
   category: Joi.string(),
+  tags: Joi.array().items(Joi.string().hex().length(24)).optional(),
 });
 module.exports = { createBookSchema, updateBookSchema };

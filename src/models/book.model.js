@@ -23,15 +23,21 @@ const bookSchema = new mongoose.Schema(
       default: 0,
     },
     author: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "Author",
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Author",
+      required: true,
     },
     category: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "Category",
-        required: true
-    }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+    ],
   },
   { timestamps: true },
 );

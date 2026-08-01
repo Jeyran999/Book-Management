@@ -1,6 +1,4 @@
 const Book = require("../models/book.model");
-const Author = require("../models/author.model");
-const Category = require("../models/category.model");
 
 const create = async (bookData) => {
   return await Book.create(bookData);
@@ -13,13 +11,17 @@ const findAll = async (page, limit, sortBy, order) => {
   return await Book.find()
     .populate("author")
     .populate("category")
+    .populate("tags")
     .sort({ [sortBy]: sortOrder })
     .skip(skip)
     .limit(limit);
 };
 
 const findById = async (id) => {
-  return await Book.findById(id).populate("author").populate("category");
+  return await Book.findById(id)
+    .populate("author")
+    .populate("category")
+    .populate("tags");
 };
 
 const update = async (id, bookData) => {
@@ -28,7 +30,8 @@ const update = async (id, bookData) => {
     new: true,
   })
     .populate("author")
-    .populate("category");
+    .populate("category")
+    .populate("tags");
 };
 
 const deleteById = async (id) => {

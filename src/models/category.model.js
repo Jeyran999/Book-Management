@@ -7,6 +7,12 @@ const categorySchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    books: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Book",
+      },
+    ],
   },
   { timestamps: true },
 );
