@@ -49,10 +49,23 @@ const updateBook = async (id, bookData) => {
 const deleteBook = async (id) => {
   return await bookRepository.deleteById(id);
 };
+
+const searchBooks = async (title, author, category, minYear, maxYear) => {
+  const books = await bookRepository.searchBooks(
+    title,
+    author,
+    category,
+    minYear,
+    maxYear,
+  );
+  return books.map(toBookDto);
+};
+
 module.exports = {
   createBook,
   getAllBooks,
   getBookById,
   updateBook,
   deleteBook,
+  searchBooks,
 };

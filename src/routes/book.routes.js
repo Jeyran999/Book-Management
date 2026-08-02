@@ -72,6 +72,9 @@ bookRouter.get("/", authenticate, bookController.getAllBooks);
  *       404:
  *         description: Book not found
  */
+
+bookRouter.get("/search", bookController.searchBooks)
+
 bookRouter.get("/:id", authenticate, bookController.getBookById);
 /**
  * @swagger
