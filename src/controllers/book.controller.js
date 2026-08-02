@@ -73,14 +73,18 @@ const deleteBook = async (req, res, next) => {
 
 const searchBooks = async (req, res, next) => {
   try {
-    const { title, author, category, minYear, maxYear } = req.query;
+    const { title, author, category, tag, minYear, maxYear, sortBy, order } =
+      req.query;
 
     const books = await bookService.searchBooks(
       title,
       author,
       category,
+      tag,
       minYear,
       maxYear,
+      sortBy,
+      order,
     );
 
     return res.status(200).json(books);

@@ -1,6 +1,7 @@
 const Book = require("../models/book.model");
 const Author = require("../models/author.model");
 const Category = require("../models/category.model");
+const Tag = require("../models/tag.model");
 
 const create = async (bookData) => {
   return await Book.create(bookData);
@@ -40,7 +41,16 @@ const deleteById = async (id) => {
   return await Book.findByIdAndDelete(id);
 };
 
-const searchBooks = async (title, author, category, minYear, maxYear) => {
+const searchBooks = async (
+  title,
+  author,
+  category,
+  tag,
+  minYear,
+  maxYear,
+  sortBy,
+  order,
+) => {
   const query = {};
 
   if (title) {
@@ -86,10 +96,26 @@ const searchBooks = async (title, author, category, minYear, maxYear) => {
     }
   }
 
+  if (tag) {
+    const tagDoc = await Tag.findOne({
+      name: {
+        $regex: tag,
+        $options: "i",
+      },
+    });
+
+    if (!tagDoc) return [];
+    query.tags = tagDoc._id;
+  }
+
+  const sortField = sortBy || "createdAt";
+  const sortOrder = order === "asc" ? 1 : -1;
+
   return await Book.find(query)
     .populate("author")
     .populate("category")
-    .populate("tags");
+    .populate("tags")
+    .sort({ [sortField]: sortOrder });
 };
 
 module.exports = { create, findAll, findById, update, deleteById, searchBooks };

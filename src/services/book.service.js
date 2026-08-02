@@ -50,13 +50,25 @@ const deleteBook = async (id) => {
   return await bookRepository.deleteById(id);
 };
 
-const searchBooks = async (title, author, category, minYear, maxYear) => {
+const searchBooks = async (
+  title,
+  author,
+  category,
+  tag,
+  minYear,
+  maxYear,
+  sortBy,
+  order,
+) => {
   const books = await bookRepository.searchBooks(
     title,
     author,
     category,
+    tag,
     minYear,
     maxYear,
+    sortBy,
+    order,
   );
   return books.map(toBookDto);
 };
