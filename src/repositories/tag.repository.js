@@ -8,12 +8,12 @@ const findAll = async () => {
   return await Tag.find();
 };
 
-const findById = async (id) => {
-  return await Tag.findById(id);
+const findById = async (id, session) => {
+  return await Tag.findById(id).session(session);
 };
 
-const save = async (tag) => {
-  return await tag.save();
+const save = async (tag, session) => {
+  return await tag.save({ session });
 };
 
 module.exports = { create, findAll, findById, save };

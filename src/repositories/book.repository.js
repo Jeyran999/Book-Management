@@ -3,8 +3,9 @@ const Author = require("../models/author.model");
 const Category = require("../models/category.model");
 const Tag = require("../models/tag.model");
 
-const create = async (bookData) => {
-  return await Book.create(bookData);
+const create = async (bookData, session) => {
+  const [book] = await Book.create([bookData], { session });
+  return book;
 };
 
 const findAll = async (page, limit, sortBy, order) => {

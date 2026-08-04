@@ -1,11 +1,11 @@
 const Author = require("../models/author.model");
 
-const findById = async (id) => {
-  return await Author.findById(id);
+const findById = async (id, session) => {
+  return await Author.findById(id).session(session);
 };
 
-const save = async (author) => {
-  return await author.save();
+const save = async (author, session) => {
+  return await author.save({ session });
 };
 
 module.exports = { findById, save };
