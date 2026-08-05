@@ -8,4 +8,8 @@ const findByEmail = async (email) => {
   return await User.findOne({ email });
 };
 
-module.exports = { create, findByEmail };
+const findByUsername = async (username) => {
+  return await User.findOne({ username });
+};
+
+module.exports = { create, findByEmail, findByUsername };

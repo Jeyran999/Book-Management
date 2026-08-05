@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { toBookDto } = require("../dto/book.dto");
+const AppError = require("../utils/appError");
 const bookRepository = require("../repositories/book.repository");
 const authorRepository = require("../repositories/author.repository");
 const categoryRepository = require("../repositories/category.repository");
@@ -12,10 +13,16 @@ const createBook = async (bookData) => {
     const book = await bookRepository.create(bookData, session);
 
     const author = await authorRepository.findById(book.author, session);
+    if (!author) {
+      throw new AppError("Author not found", 404);
+    }
     author.books.push(book._id);
     await authorRepository.save(author, session);
 
     const category = await categoryRepository.findById(book.category, session);
+    if (!category) {
+      throw new AppError("Category not found", 404);
+    }
     category.books.push(book._id);
     await categoryRepository.save(category, session);
 
@@ -46,18 +53,20 @@ const getAllBooks = async (page, limit, sortBy, order) => {
 
 const getBookById = async (id) => {
   const book = await bookRepository.findById(id);
-  if (!book) return null;
+  if (!book) throw new AppError("Book not found", 404);
   return toBookDto(book);
 };
 
 const updateBook = async (id, bookData) => {
   const book = await bookRepository.update(id, bookData);
-  if (!book) return null;
+  if (!book) throw new AppError("Book not found", 404);
   return toBookDto(book);
 };
 
 const deleteBook = async (id) => {
-  return await bookRepository.deleteById(id);
+  const book = await bookRepository.deleteById(id);
+  if (!book) throw new AppError("Book not found", 404);
+  return book;
 };
 
 const searchBooks = async (
