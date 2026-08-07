@@ -5,6 +5,7 @@ const bookRepository = require("../repositories/book.repository");
 const authorRepository = require("../repositories/author.repository");
 const categoryRepository = require("../repositories/category.repository");
 const tagRepository = require("../repositories/tag.repository");
+const cache = require("../utils/cache");
 
 const createBook = async (bookData) => {
   const session = await mongoose.startSession();
@@ -47,8 +48,17 @@ const createBook = async (bookData) => {
 };
 
 const getAllBooks = async (page, limit, sortBy, order) => {
+  const cacheKey = `books:${page}:${limit}:${sortBy || "createdAt"}:${order || "desc"}`;
+  const cachedBooks = cache.get(cacheKey);
+
+  if (cachedBooks) return cachedBooks;
+
   const books = await bookRepository.findAll(page, limit, sortBy, order);
-  return books.map(toBookDto);
+  const booksDto = books.map(toBookDto);
+
+  cache.set(cacheKey, booksDto);
+
+  return booksDto;
 };
 
 const getBookById = async (id) => {
