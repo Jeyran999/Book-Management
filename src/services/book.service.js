@@ -6,6 +6,7 @@ const authorRepository = require("../repositories/author.repository");
 const categoryRepository = require("../repositories/category.repository");
 const tagRepository = require("../repositories/tag.repository");
 const cache = require("../utils/cache");
+const { clearBooksCache } = require("../utils/cacheHelper");
 
 const createBook = async (bookData) => {
   const session = await mongoose.startSession();
@@ -38,6 +39,7 @@ const createBook = async (bookData) => {
       }
     }
     await session.commitTransaction();
+    clearBooksCache();
     return toBookDto(book);
   } catch (error) {
     await session.abortTransaction();
@@ -70,12 +72,14 @@ const getBookById = async (id) => {
 const updateBook = async (id, bookData) => {
   const book = await bookRepository.update(id, bookData);
   if (!book) throw new AppError("Book not found", 404);
+  clearBooksCache();
   return toBookDto(book);
 };
 
 const deleteBook = async (id) => {
   const book = await bookRepository.deleteById(id);
   if (!book) throw new AppError("Book not found", 404);
+  clearBooksCache();
   return book;
 };
 
