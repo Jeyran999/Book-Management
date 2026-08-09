@@ -107,7 +107,7 @@ src/
 Clone the repository:
 
 ```bash
-git clone "https://github.com/Jeyran999/Week-1-Book-Management"
+git clone "https://github.com/Jeyran999/Book-Management.git"
 ```
 
 Navigate to the project directory:
