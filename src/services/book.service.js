@@ -55,7 +55,13 @@ const getAllBooks = async (page, limit, sortBy, order) => {
 
   if (cachedBooks) return cachedBooks;
 
-  const books = await bookRepository.findAll(page, limit, sortBy, order);
+  const books = await bookRepository.findAll(
+    page,
+    limit,
+    sortBy || "createdAt",
+    order || "desc",
+  );
+
   const booksDto = books.map(toBookDto);
 
   cache.set(cacheKey, booksDto);
@@ -67,6 +73,16 @@ const getBookById = async (id) => {
   const book = await bookRepository.findById(id);
   if (!book) throw new AppError("Book not found", 404);
   return toBookDto(book);
+};
+
+const getBookForDownload = async (id) => {
+  const book = await bookRepository.findById(id);
+
+  if (!book) {
+    throw new AppError("Book not found", 404);
+  }
+
+  return book;
 };
 
 const updateBook = async (id, bookData) => {
@@ -110,6 +126,7 @@ module.exports = {
   createBook,
   getAllBooks,
   getBookById,
+  getBookForDownload,
   updateBook,
   deleteBook,
   searchBooks,

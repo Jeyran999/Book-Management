@@ -3,6 +3,7 @@ const bookController = require("../controllers/book.controller");
 const validate = require("../middlewares/validate.middleware");
 const authenticate = require("../middlewares/auth.middleware");
 const roleMiddleware = require("../middlewares/role.middleware");
+const upload = require("../middlewares/upload.middleware");
 
 const {
   createBookSchema,
@@ -73,7 +74,7 @@ bookRouter.get("/", authenticate, bookController.getAllBooks);
  *         description: Book not found
  */
 
-bookRouter.get("/search", bookController.searchBooks)
+bookRouter.get("/search", bookController.searchBooks);
 
 bookRouter.get("/:id", authenticate, bookController.getBookById);
 /**
@@ -137,4 +138,19 @@ bookRouter.delete(
   roleMiddleware("ADMIN"),
   bookController.deleteBook,
 );
+
+bookRouter.get(
+  "/:id/cover/download",
+  authenticate,
+  bookController.downloadCover,
+);
+
+bookRouter.post(
+  "/:id/cover",
+  authenticate,
+  roleMiddleware("ADMIN"),
+  upload.single("cover"),
+  bookController.uploadCover,
+);
+
 module.exports = bookRouter;

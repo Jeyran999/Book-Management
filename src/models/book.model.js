@@ -38,6 +38,9 @@ const bookSchema = new mongoose.Schema(
         ref: "Tag",
       },
     ],
+    coverImage: {
+      type: String,
+    },
   },
   { timestamps: true },
 );

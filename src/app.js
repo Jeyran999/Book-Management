@@ -6,6 +6,8 @@ const bookRouter = require("./routes/book.routes");
 const errorHandler = require("./middlewares/error.middleware");
 const authRouter = require("./routes/auth.routes");
 const tagRouter = require("./routes/tag.routes");
+const path = require("path");
+
 const app = express();
 
 app.use(express.json());
@@ -17,6 +19,8 @@ app.get("/", (req, res) => {
     message: "Book Management API is running",
   });
 });
+
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/books", bookRouter);
 app.use("/auth", authRouter);
