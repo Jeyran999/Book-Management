@@ -2,3 +2,5 @@ node_modules
 .env
 uploads/
 .postman/
+.env.production
+.env.development
