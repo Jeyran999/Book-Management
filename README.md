@@ -11,6 +11,9 @@ A RESTful API for managing books, authors, and categories. This project was deve
 - JWT
 - bcrypt
 - Joi
+- Multer
+- node-cron
+- node-cache
 - Swagger / OpenAPI
 - Jest
 
@@ -37,6 +40,13 @@ A RESTful API for managing books, authors, and categories. This project was deve
 - MongoDB transactions with Mongoose sessions
 - Automatic transaction rollback on failure
 - Optimized related data loading using populate()
+- Book cover image upload and download
+- Image file validation with Multer
+- File size restrictions
+- Scheduled cache cleanup with node-cron
+- Asynchronous email notification simulation
+- Environment-based configuration for development and production
+- Swagger documentation for protected and file-upload endpoints
 
 ## Authentication & Authorization
 
@@ -78,23 +88,32 @@ src/
 │   ├── auth.middleware.js
 │   ├── error.middleware.js
 │   ├── role.middleware.js
+│   ├── upload.middleware.js
 │   └── validate.middleware.js
 ├── models/
 │   ├── author.model.js
 │   ├── book.model.js
 │   ├── category.model.js
+│   ├── tag.model.js
 │   └── user.model.js
 ├── repositories/
 │   ├── book.repository.js
 │   └── user.repository.js
 ├── routes/
-│   └── book.routes.js
+│   ├── auth.routes.js
+│   ├── book.routes.js
+│   └── tag.routes.js
+├── schedulers/
+│   └── cache.scheduler.js
 ├── services/
+│   ├── auth.service.js
 │   ├── book.service.js
-│   └── auth.service.js
+│   └── notification.service.js
 ├── tests/
 │   └── book.service.test.js
 ├── utils/
+│   ├── cache.js
+│   ├── cacheHelper.js
 │   ├── jwt.js
 │   └── password.js
 ├── validations/
@@ -122,14 +141,6 @@ Install dependencies:
 npm install
 ```
 
-Create a `.env` file in the root directory:
-
-```env
-PORT=3000
-MONGO_URI=mongodb_connection_string
-JWT_SECRET=your_secret_key
-```
-
 Start the development server:
 
 ```bash
@@ -142,14 +153,30 @@ Run tests:
 npm test
 ```
 
-## Environment Variables
+## Environment Configuration
 
-Create a `.env` file with the following variables:
+The application supports separate configurations for development and production environments.
+
+### Development
+
+Create a `.env.development` file:
 
 ```env
+NODE_ENV=development
 PORT=3000
 MONGO_URI=mongodb_connection_string
 JWT_SECRET=your_secret_key
+```
+
+### Production
+
+Create a `.env.production` file:
+
+```env
+NODE_ENV=production
+PORT=3000
+MONGO_URI=mongodb_production_connection_string
+JWT_SECRET=your_production_secret
 ```
 
 You can use `.env.example` as a template.
@@ -221,6 +248,26 @@ DELETE /books/:id
 
 **Required role:** `ADMIN`
 
+### Upload Book Cover
+
+```text
+POST /books/:id/cover
+```
+
+**Required role:** `ADMIN`
+
+The endpoint accepts JPEG, PNG, WebP, and AVIF image files using multipart/form-data.
+
+Maximum file size: 2 MB.
+
+### Download Book Cover
+
+```text
+GET /books/:id/cover/download
+```
+
+**Required role:** `ADMIN`
+
 ## API Documentation
 
 Swagger UI is available at:
@@ -230,6 +277,18 @@ http://localhost:3000/api-docs
 ```
 
 The Swagger documentation provides information about all available API endpoints and allows them to be tested directly.
+
+## Scheduled Tasks
+
+The application includes a scheduled cache cleanup task using `node-cron`.
+
+The scheduled job runs daily at midnight and automatically clears cached book data to prevent stale cache entries.
+
+## Asynchronous Processing
+
+The application includes an asynchronous email notification simulation.
+
+After a book is created, an email notification is triggered without blocking the main API response. The notification service simulates email delivery using an asynchronous delay.
 
 ## Testing
 
@@ -261,18 +320,31 @@ npm test
 
 ### Week 2
 
-- **CP-1:** JWT-based authentication and stateless session management
-- **CP-2:** Role-Based Access Control with USER and ADMIN roles
-- **CP-3:** Correct responses for authentication errors (401 and 403)
-- **CP-4:** JWT token expiration handling
+- **CP-1:** User entity and password hashing with BCrypt
+- **CP-2:** Registration and Login endpoints with JWT authentication
+- **CP-3:** JWT authentication middleware and stateless session management
+- **CP-4:** Role-Based Access Control with different endpoints for USER and ADMIN
+- **CP-5:** Correct authentication error responses (401 Unauthorized and 403 Forbidden)
+- **CP-6:** JWT token expiration management
 
 ### Week 3
 
-- **CP-1:** Advanced search, filtering and sorting
-- **CP-2:** MongoDB transactions using Mongoose sessions
-- **CP-3:** Transaction rollback implementation
-- **CP-4:** Optimized related data loading using populate()
-- **CP-5:** Transaction rollback unit tests with Jest
+- **CP-1:** Proper design of One-to-Many and Many-to-Many relationships using Mongoose references
+- **CP-2:** Complex filtering using Mongoose query methods
+- **CP-3:** Dynamic search and filtering endpoint with multiple query parameters
+- **CP-4:** MongoDB transactions using Mongoose sessions for operations involving multiple documents
+- **CP-5:** Optimized related data loading using `populate()` to avoid inefficient queries
+- **CP-6:** Unit tests for the transaction rollback scenario using Jest
+
+### Week 4
+
+- **CP-1:** Book cover image upload and download using Multer
+- **CP-2:** Image file validation and file size restrictions
+- **CP-3:** Scheduled task using node-cron for daily cache cleanup
+- **CP-4:** Asynchronous processing with email notification simulation
+- **CP-5:** Book cover file handling and storage
+- **CP-6:** Environment-based configuration with development and production profiles
+- **CP-7:** Swagger/OpenAPI documentation update
 
 ## License
 
