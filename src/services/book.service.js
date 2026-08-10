@@ -7,6 +7,7 @@ const categoryRepository = require("../repositories/category.repository");
 const tagRepository = require("../repositories/tag.repository");
 const cache = require("../utils/cache");
 const { clearBooksCache } = require("../utils/cacheHelper");
+const { sendEmailNotification } = require("../services/notification.service");
 
 const createBook = async (bookData) => {
   const session = await mongoose.startSession();
@@ -40,6 +41,12 @@ const createBook = async (bookData) => {
     }
     await session.commitTransaction();
     clearBooksCache();
+
+    sendEmailNotification(
+      "admin@example.com",
+      `Book "${book.title}" was created successfully`,
+    );
+    
     return toBookDto(book);
   } catch (error) {
     await session.abortTransaction();
