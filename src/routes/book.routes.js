@@ -139,12 +139,81 @@ bookRouter.delete(
   bookController.deleteBook,
 );
 
+/**
+ * @swagger
+ * /books/{id}/cover/download:
+ *   get:
+ *     summary: Download a book cover
+ *     tags:
+ *       - Books
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Book ID
+ *     responses:
+ *       200:
+ *         description: Book cover file
+ *         content:
+ *           image/*:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         description: Authentication required
+ *       404:
+ *         description: Book or cover not found
+ */
 bookRouter.get(
   "/:id/cover/download",
   authenticate,
   bookController.downloadCover,
 );
 
+/**
+ * @swagger
+ * /books/{id}/cover:
+ *   post:
+ *     summary: Upload a book cover
+ *     tags:
+ *       - Books
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Book ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cover:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - cover
+ *     responses:
+ *       200:
+ *         description: Cover uploaded successfully
+ *       400:
+ *         description: Invalid file or cover is missing
+ *       401:
+ *         description: Authentication required
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: Book not found
+ */
 bookRouter.post(
   "/:id/cover",
   authenticate,
